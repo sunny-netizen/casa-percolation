@@ -1,0 +1,1 @@
+ALTER TABLE osm_segments_min ADD column length int;
