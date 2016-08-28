@@ -160,26 +160,4 @@ FROM (
 ) as grouped_ids
 WHERE count = 2;"""
 
-get_a_segment_with_order_2_ends = """SELECT a.segment_id, a.start_node_id, (
-		SELECT count(*)
-		FROM osm_segments_min as b
-		WHERE a.start_node_id = b.end_node_id OR a.start_node_id = b.start_node_id
-	) as start_count,
-	a.end_node_id, (
-		SELECT count(*)
-		FROM osm_segments_min as c
-		WHERE a.end_node_id = c.end_node_id OR a.end_node_id = c.start_node_id
-	) as end_count
-	FROM osm_segments_min as a
-	WHERE ((
-		SELECT count(*)
-		FROM osm_segments_min as b
-		WHERE a.start_node_id = b.end_node_id OR a.start_node_id = b.start_node_id
-	) = 2 OR (
-		SELECT count(*)
-		FROM osm_segments_min as c
-		WHERE a.end_node_id = c.end_node_id OR a.end_node_id = c.start_node_id
-	) = 2)
-	ORDER BY segment_id limit 1"""
-
 main()
