@@ -1,0 +1,664 @@
+<!DOCTYPE html >
+<html>
+<head>
+	<meta charset='UTF-8'/>
+	<title>European Encyclopædia | Wikipedia Language Map</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.18.0/mapbox-gl.css' rel='stylesheet' />
+	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.18.0/mapbox-gl.js'></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
+
+	<script src="underscore-min.js"></script>
+
+	<style>
+	html {
+		height: 100%;
+	}
+	body {
+		margin:0;
+		padding:0;
+		display: flex;
+		align-items: stretch;
+		height: 100%;
+		overflow: hidden;
+	}
+	#controls {
+		order: 1;
+		flex: 1 auto;
+		background: rgba(255, 255, 255, 0.9);
+		padding: 1em;
+		max-width: 23em;
+		overflow-y: scroll;
+	}
+	#controls .sp-replacer{
+		vertical-align: top;
+	}
+	#mapwrap {
+		position: relative;
+		order: 2;
+		flex: 1 100%;
+	}
+	#map {
+		position:absolute;
+		top:0;
+		bottom:0;
+		left:0;
+		right:0;
+	}
+	h1 {
+		margin: 0 0 1em;
+		font-size: 1.3em;
+	}
+	hr {
+		border: 0.5em solid black;
+		height: 0px;
+		width: 100%;
+		margin: 2em 0px;
+	}
+	.language-control {
+		display: block;
+	}
+	label {
+		display: inline-block;
+		line-height: 36px;
+	}
+
+	#box {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin-top: -15px;
+		margin-left: -15px;
+		height: 30px;
+		width: 30px;
+		border: 4px solid #f54337;
+		border-radius: 50%;
+		background: transparent;
+		opacity: 0.9;
+		z-index: 500;
+		pointer-events: none;
+	}
+	</style>
+</head>
+<body>
+<div id="controls">
+	<h1>European Encyclopædia</h1>
+	<p>Move around the map to find Wikipedia articles:</p>
+	<ul id="articles"></ul>
+	<hr>
+	<form action="GET">
+	<label><input name="show_labels" type="checkbox" checked="checked"/>Show labels</label>
+	<p>Show different languages and change colours:</p>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="sq" id="sq"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-sq" name="show-sq"/>
+			Albanian (sq)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="ar" id="ar"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-ar" name="show-ar"/>
+			Arabic (ar)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="hy" id="hy"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-hy" name="show-hy"/>
+			Armenian (hy)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="an" id="an"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-an" name="show-an"/>
+			Aragonese (an)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="bs" id="bs"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-bs" name="show-bs"/>
+			Bosnian (bs)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="br" id="br"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-br" name="show-br"/>
+			Breton (br)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="bg" id="bg"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-bg" name="show-bg"/>
+			Bulgarian (bg)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="ca" id="ca"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-ca" name="show-ca"/>
+			Catalan (ca)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="hr" id="hr"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-hr" name="show-hr"/>
+			Croatian (hr)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="cs" id="cs"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-cs" name="show-cs"/>
+			Czech (cs)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="da" id="da"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-da" name="show-da"/>
+			Danish (da)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="nl" id="nl"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-nl" name="show-nl"/>
+			Dutch (nl)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#ffff00" name="en" id="en"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-en" name="show-en" checked/>
+			English (en)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="et" id="et"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-et" name="show-et"/>
+			Estonian (et)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="fo" id="fo"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-fo" name="show-fo"/>
+			Faroese (fo)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="fi" id="fi"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-fi" name="show-fi"/>
+			Finnish (fi)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#ff00ff" name="fr" id="fr"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-fr" name="show-fr" checked/>
+			French (fr)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="gd" id="gd"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-gd" name="show-gd"/>
+			Gaelic (gd)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="gl" id="gl"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-gl" name="show-gl"/>
+			Galician (gl)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#00ffff" name="de" id="de"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-de" name="show-de" checked/>
+			German (de)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="ga" id="ga"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-ga" name="show-ga"/>
+			Irish (ga)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="it" id="it"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-it" name="show-it"/>
+			Italian (it)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="la" id="la"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-la" name="show-la"/>
+			Latin (la)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="lv" id="lv"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-lv" name="show-lv"/>
+			Latvian (lv)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="lt" id="lt"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-lt" name="show-lt"/>
+			Lithuanian (lt)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="lb" id="lb"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-lb" name="show-lb"/>
+			Luxembourgish (lb)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="no" id="no"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-no" name="show-no"/>
+			Norwegian (no)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="nn" id="nn"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-nn" name="show-nn"/>
+			Norwegian Nynorsk (nn)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="oc" id="oc"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-oc" name="show-oc"/>
+			Occitan (oc)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="pl" id="pl"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-pl" name="show-pl"/>
+			Polish (pl)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="pt" id="pt"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-pt" name="show-pt"/>
+			Portuguese (pt)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="ro" id="ro"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-ro" name="show-ro"/>
+			Romanian (ro)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="ru" id="ru"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-ru" name="show-ru"/>
+			Russian (ru)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="sr" id="sr"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-sr" name="show-sr"/>
+			Serbian (sr)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="sk" id="sk"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-sk" name="show-sk"/>
+			Slovak (sk)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="sl" id="sl"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-sl" name="show-sl"/>
+			Slovene (sl)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="es" id="es"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-es" name="show-es"/>
+			Spanish (es)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="sv" id="sv"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-sv" name="show-sv"/>
+			Swedish (sv)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="tr" id="tr"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-tr" name="show-tr"/>
+			Turkish (tr)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="uk" id="uk"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-uk" name="show-uk"/>
+			Ukrainian (uk)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="wa" id="wa"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-wa" name="show-wa"/>
+			Walloon (wa)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="cy" id="cy"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-cy" name="show-cy"/>
+			Welsh (cy)
+		</label>
+	</div>
+	<div class="language-control">
+		<label>
+			<input type="color" value="#0645ad" name="yi" id="yi"/>
+		</label>
+		<label>
+			<input type="checkbox" id="show-yi" name="show-yi"/>
+			Yiddish (yi)
+		</label>
+	</div>
+	</form>
+	<hr>
+	<p>Dataset: <a href="https://www.wikipedia.org/">Wikipedia</a> articles that have been tagged with geographical coordinates, from the wikis in most European languages.</p>
+	<p>Downloaded from: <a href="http://wiki.dbpedia.org/Downloads2015-10">http://wiki.dbpedia.org/Downloads2015-10</a></p>
+	<p>This is a bulk extract from <a href="http://wiki.dbpedia.org/">DBpedia</a>, using both their 'geo_coordinates_all' and 'geo_coordinates_mappingbased' extracts.</p>
+	<p>Vector tiles created using Mapbox <a href="https://github.com/mapbox/tippecanoe">Tippecanoe</a>.
+	Basemap and place labels are from <a href="https://cartodb.com/attributions">CartoDB</a> basemap layers,
+	which use <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> open data.</p>
+</div>
+<div id="mapwrap">
+	<div id='map'></div>
+	<div id="box"></div>
+</div>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoidG9tYWxydXNzZWxsIiwiYSI6Im9TM1lfSWsifQ.0dE4yPsqc7HJbBT22ceU5g';
+var defaults = {
+  lat: 47.5,
+  lng: 9,
+  zoom: 4
+};
+var options = update_options_from_hash(defaults);
+var style_url = '/dbpedia.json';
+var language_codes = ["an", "ar", "bg", "br", "bs", "ca", "cs", "cy", "da", "de", "en", "es", "et", "fi", "fo", "fr", "ga", "gd", "gl", "hr", "hy", "it", "la", "lb", "lt", "lv", "nl", "nn", "no", "oc", "pl", "pt", "ro", "ru", "sk", "sq", "sr", "sv", "tr", "uk", "wa", "yi"];
+
+var active_languages = [];
+
+
+var map = new mapboxgl.Map({
+	container: 'map',
+	center: [options.lng,options.lat],
+	zoom: options.zoom,
+	minZoom: 2,
+	maxZoom: 17,
+	style: style_url
+});
+var nav = new mapboxgl.Navigation({position: 'top-right'});
+map.addControl(nav);
+
+function setColor(e){
+	var code = e.target.id;
+	var color = e.target.value;
+	map.setPaintProperty(code, 'circle-color', color);
+}
+
+function showLang(e){
+	var code = e.target.id.replace("show-","");
+	var show = e.target.checked;
+	var opacity = (show)? 0.7 : 0;
+	if(show){
+		active_languages = _.union(active_languages,[code]);
+	} else {
+		active_languages = _.difference(active_languages, [code]);
+	}
+	map.setPaintProperty(code, 'circle-opacity', opacity);
+	load_center();
+}
+
+map.on("load", function(){
+	for (var i = language_codes.length - 1; i >= 0; i--) {
+		var code = language_codes[i];
+		var color_input = document.getElementById(code);
+		var color = color_input.value;
+		var color_checkbox = document.getElementById("show-"+code);
+		var show = color_checkbox.checked;
+		var opacity = (show)? 0.7 : 0;
+		var source = (document.location.search.match("dataset=geo_only"))? "dbpedia_geo" : "dbpedia";
+
+		if (show){
+			active_languages.push(code);
+		}
+
+		color_input.addEventListener('change', setColor);
+		color_checkbox.addEventListener('change', showLang);
+
+		map.addLayer({
+		"id": code,
+		"type": "circle",
+		"source": source,
+		"source-layer": "dbpedia",
+		"filter": ["==", "l", code],
+		"paint": {
+			"circle-color": color,
+			"circle-radius": {
+				"stops": [[4,2],[10,4.0],[14,6.0]]
+			},
+			"circle-opacity": opacity
+		}
+	  });
+	}
+	map.addLayer({
+		"id": "labels",
+		"type": "raster",
+		"source": "cartodb_labels"
+	});
+
+	var toggle = document.querySelector('[name="show_labels"]');
+	toggle.addEventListener('change',toggleVisibility);
+	toggleVisibility();
+	load_center();
+});
+
+$("input[type=color").spectrum({
+	showAlpha: true,
+	showPalette: true,
+	palette: [
+		["red", "green", "blue"],
+		["cyan", "magenta", "yellow"],
+	],
+	change: function(c) {
+		var color = c.toRgbString();
+		var code = $(this).attr("id");
+		map.setPaintProperty(code, 'circle-color', color);
+	}
+});
+
+
+map.on('zoomend', set_location_hash);
+map.on('moveend', set_location_hash);
+
+map.on('zoomend', load_center);
+map.on('moveend', load_center);
+
+function toggleVisibility(){
+	var toggle = document.querySelector('[name="show_labels"]');
+	var visibility = (toggle.checked) ? 'visible':'none';
+	map.setLayoutProperty('labels', 'visibility', visibility);
+}
+
+function load_center(){
+	var w = map.getContainer().clientWidth;
+	var h = map.getContainer().clientHeight;
+	var buffer = document.getElementById('box').clientWidth / 2; // buffer box
+	var center = [[w/2 - buffer, h/2 - buffer], [w/2 + buffer, h/2 + buffer]];
+	var features = map.queryRenderedFeatures(center, {layers: active_languages});
+
+	var list = document.getElementById('articles');
+	var max = 5;
+	list.innerHTML = "";
+	var code, base, url, text, li, a;
+	for (var i = 0; i < features.length; i++) {
+		base = features[i].properties.u;
+		code = features[i].properties.l;
+		text = decodeURI(base).replace(/_/g, " ") + " ("+code+")";
+		li = document.createElement('li');
+		a = document.createElement('a');
+		a.setAttribute('href',"http://"+code+".wikipedia.org/wiki/"+base);
+		a.setAttribute('target',"_blank");
+		a.innerHTML = text;
+		li.appendChild(a);
+		list.appendChild(li);
+		if (i >= max-1){
+			if(features.length - i - 1 > 0){
+				li = document.createElement('li');
+				li.innerHTML = "&hellip; and around "+(features.length - i - 1)+" more.";
+				list.appendChild(li);
+			}
+			break;
+		}
+	}
+
+}
+
+
+function set_location_hash(){
+	var centre = map.getCenter();
+	window.location.hash = 'zoom=' + Math.floor(map.getZoom()) + '&lng=' + centre.lng.toFixed(6) + '&lat=' + centre.lat.toFixed(6);
+}
+
+function update_options_from_hash(options){
+	var hash = window.location.hash;
+	if (hash.length){
+		var elements = hash.substring(1).split('&');
+		for (var i = 0; i < elements.length; i++) {
+			var pair = elements[i].split('=');
+			options[pair[0]] = pair[1];
+		}
+	}
+	return options;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html >
+<html>
+<head>
+	<meta charset='UTF-8'/>
+	<title>Europe's Road Intersections</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.18.0/mapbox-gl.css' rel='stylesheet' />
+	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.18.0/mapbox-gl.js'></script>
+
+
+	<style>
+	html {
+		height: 100%;
+	}
+	body {
+		margin:0;
+		padding:0;
+		display: flex;
+		align-items: stretch;
+		height: 100%;
+		overflow: hidden;
+	}
+	#controls {
+		order: 1;
+		flex: 1 auto;
+		background: rgba(255, 255, 255, 0.9);
+		padding: 1em;
+		max-width: 23em;
+		overflow-y: scroll;
+	}
+	#mapwrap {
+		position: relative;
+		order: 2;
+		flex: 1 100%;
+	}
+	#map {
+		position:absolute;
+		top:0;
+		bottom:0;
+		left:0;
+		right:0;
+	}
+	h1 {
+		margin: 0 0 1em;
+		font-size: 1.3em;
+	}
+	hr {
+		border: 0.5em solid black;
+		height: 0px;
+		width: 100%;
+		margin: 2em 0px;
+	}
+	label {
+		display: block;
+	}
+	</style>
+</head>
+<body>
+<div id="controls">
+	<h1>Europe's Roads</h1>
+	<hr>
+	<form action="GET">
+		<label><input name="show_labels" type="checkbox" checked="checked"/>Show labels</label>
+	</form>
+</div>
+<div id="mapwrap">
+	<div id='map'></div>
+</div>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoidG9tYWxydXNzZWxsIiwiYSI6Im9TM1lfSWsifQ.0dE4yPsqc7HJbBT22ceU5g';
+var defaults = {
+  lat: 47.5,
+  lng: 9,
+  zoom: 4
+};
+var options = update_options_from_hash(defaults);
+var style_url = '/europe_nodes.json';
+
+var map = new mapboxgl.Map({
+	container: 'map',
+	center: [options.lng,options.lat],
+	zoom: options.zoom,
+	minZoom: 2,
+	maxZoom: 17,
+	style: style_url
+});
+
+map.on('load',function(){
+	var toggle = document.querySelector('[name="show_labels"]');
+	toggle.addEventListener('change',toggleVisibility);
+	toggleVisibility();
+});
+
+map.on('zoomend', set_location_hash);
+map.on('moveend', set_location_hash);
+
+function toggleVisibility(){
+	var toggle = document.querySelector('[name="show_labels"]');
+	var visibility = (toggle.checked) ? 'visible':'none';
+	map.setLayoutProperty('labels', 'visibility', visibility);
+}
+
+function set_location_hash(){
+	var centre = map.getCenter();
+	window.location.hash = 'zoom=' + Math.floor(map.getZoom()) + '&lng=' + centre.lng.toFixed(6) + '&lat=' + centre.lat.toFixed(6);
+}
+
+function update_options_from_hash(options){
+	var hash = window.location.hash;
+	if (hash.length){
+		var elements = hash.substring(1).split('&');
+		for (var i = 0; i < elements.length; i++) {
+			var pair = elements[i].split('=');
+			options[pair[0]] = pair[1];
+		}
+	}
+	return options;
+}
+</script>
+</body>
+</html>

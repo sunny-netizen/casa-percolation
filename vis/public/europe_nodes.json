@@ -1,0 +1,70 @@
+{
+  "version": 8,
+  "sources": {
+    "europe_nodes": {
+      "type": "vector",
+      "tiles": [
+        "http://casa-percolation.made-by-tom.co.uk/tiles/europe_nodes/{z}/{x}/{y}.pbf"
+      ],
+      "minzoom": 0,
+      "maxzoom": 14
+    },
+    "cartodb_labels": {
+      "type": "raster",
+      "tiles": [
+          "http://a.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+          "http://b.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+          "http://c.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+          "http://d.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png"
+      ],
+      "tileSize": 256
+    },
+    "cartodb_base": {
+      "type": "raster",
+      "tiles": [
+          "http://a.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+          "http://b.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+          "http://c.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+          "http://d.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png"
+      ],
+      "tileSize": 256
+    }
+  },
+  "layers": [{
+      "id": "base",
+      "type": "raster",
+      "source": "cartodb_base"
+  }, {
+    "id": "europe_nodes",
+    "type": "circle",
+    "source": "europe_nodes",
+    "source-layer": "europe_nodes",
+    "paint": {
+        "circle-color": {
+          "property": "l",
+          "stops": [
+            [0, "#FDE725"],
+            [5, "#B4DE2C"],
+            [10, "#6DCD59"],
+            [20, "#35B779"],
+            [40, "#1F9E89"],
+            [80, "#26828E"],
+            [160, "#31688E"],
+            [320, "#3E4A89"],
+            [640, "#482878"],
+            [1280, "#440154"],
+            [10000, "#400130"]
+          ]
+        },
+        "circle-radius": {
+            "stops": [[4,1.5],[10,2.0],[14,4.0]]
+        },
+        "circle-opacity": 0.7,
+        "circle-blur":0.2
+    }
+  }, {
+      "id": "labels",
+      "type": "raster",
+      "source": "cartodb_labels"
+  }]
+}

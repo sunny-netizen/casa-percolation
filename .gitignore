@@ -1,3 +1,5 @@
 build/[^.]*
 data/europe*
 data/andorra*
+node_modules
+deploy

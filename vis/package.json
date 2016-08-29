@@ -1,0 +1,16 @@
+{
+  "name": "casa-percolation",
+  "version": "1.0.0",
+  "description": "Web visualisations for disssertation, primarily vector tiles maps: DBpedia, OpenStreetMap road network.",
+  "main": "tileserver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4",
+    "mbtiles": "^0.9.0",
+    "tilelive": "^5.12.2"
+  }
+}

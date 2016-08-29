@@ -1,0 +1,46 @@
+{
+  "version": 8,
+  "sources": {
+    "dbpedia": {
+      "type": "vector",
+      "tiles": [
+        "http://casa-percolation.made-by-tom.co.uk/tiles/dbpedia/{z}/{x}/{y}.pbf"
+      ],
+      "minzoom": 0,
+      "maxzoom": 14
+    },
+    "dbpedia_geo": {
+      "type": "vector",
+      "tiles": [
+        "http://casa-percolation.made-by-tom.co.uk/tiles/dbpedia_geo/{z}/{x}/{y}.pbf"
+      ],
+      "minzoom": 0,
+      "maxzoom": 14
+    },
+    "cartodb_labels": {
+      "type": "raster",
+      "tiles": [
+          "http://a.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+          "http://b.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+          "http://c.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+          "http://d.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png"
+      ],
+      "tileSize": 256
+    },
+    "cartodb_base": {
+      "type": "raster",
+      "tiles": [
+          "http://a.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+          "http://b.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+          "http://c.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+          "http://d.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png"
+      ],
+      "tileSize": 256
+    }
+  },
+  "layers": [{
+      "id": "base",
+      "type": "raster",
+      "source": "cartodb_base"
+  }]
+}
