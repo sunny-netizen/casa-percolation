@@ -44,6 +44,10 @@
 		margin: 0 0 1em;
 		font-size: 1.3em;
 	}
+	h2 {
+		margin: 0 0 0.25em;
+		font-size: 1em;
+	}
 	hr {
 		border: 0.5em solid black;
 		height: 0px;
@@ -53,15 +57,41 @@
 	label {
 		display: block;
 	}
+	#legend {
+		list-style: none;
+		padding: 0;
+	}
+	#legend li span:first-child {
+		display: inline-block;
+		width: 1em;
+		height: 1em;
+		border-radius: 0.5em;
+		text-indent: -30em;
+		margin-right: 0.5em;
+	}
 	</style>
 </head>
 <body>
 <div id="controls">
 	<h1>Europe's Roads</h1>
-	<hr>
+	<p>This map shows the nodes of road junctions across Europe, taken from an
+	extract of OpenStreetMap.</p>
+	<p>Note that nodes are dropped automatically at lower zoom levels, so some
+	will appear when zooming in. All nodes are displayed at zoom levels 12 and
+	above.</p>
+	<h2>Legend</h2>
+	<p>Length of shortest road segment from node (metres)</p>
+	<ul id="legend"></ul>
 	<form action="GET">
 		<label><input name="show_labels" type="checkbox" checked="checked"/>Show labels</label>
 	</form>
+	<hr>
+	<h2>Attribution</h2>
+	<p>Source data is © OpenStreetMap contributors, licensed under the Open Data
+	Commons Open Database License (ODbL) by the OpenStreetMap Foundation (OSMF).</p>
+	<p>Vector tiles created using Mapbox <a href="https://github.com/mapbox/tippecanoe">Tippecanoe</a>.
+	Basemap and place labels are from <a href="https://cartodb.com/attributions">CartoDB</a> basemap layers,
+	which also use <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> open data.</p>
 </div>
 <div id="mapwrap">
 	<div id='map'></div>
@@ -85,11 +115,37 @@ var map = new mapboxgl.Map({
 	maxZoom: 17,
 	style: style_url
 });
+var nav = new mapboxgl.Navigation({position: 'top-right'});
+map.addControl(nav);
 
 map.on('load',function(){
 	var toggle = document.querySelector('[name="show_labels"]');
 	toggle.addEventListener('change',toggleVisibility);
 	toggleVisibility();
+
+	// legend
+	var paint = map.getPaintProperty("europe_nodes","circle-color");
+	var stops = paint.stops;
+	var legend = document.querySelector("#legend");
+	for (var i = 0; i < stops.length; i++) {
+		var stop = stops[i];
+		var key = stop[0];
+		var value = stop[1];
+
+		console.log(key+":"+value);
+
+		var entry = document.createElement("li");
+
+		var valEl = document.createElement("span");
+		valEl.textContent = value;
+		valEl.style = "background-color: "+value;
+		entry.appendChild(valEl);
+
+		var keyEl = document.createElement("span");
+		keyEl.textContent = key;
+		entry.appendChild(keyEl);
+		legend.appendChild(entry);
+	}
 });
 
 map.on('zoomend', set_location_hash);
