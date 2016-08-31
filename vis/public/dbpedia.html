@@ -86,8 +86,10 @@
 <body>
 <div id="controls">
 	<h1>European Encyclopædia</h1>
-	<p>Move around the map to find Wikipedia articles:</p>
-	<ul id="articles"></ul>
+	<p>Move around the map to find Wikipedia articles in different languages:</p>
+	<ul id="articles">
+		<li><em>(Click on a dot to see the title and link.)</em></li>
+	</ul>
 	<hr>
 	<form action="GET">
 	<label><input name="show_labels" type="checkbox" checked="checked"/>Show labels</label>
@@ -490,7 +492,7 @@
 </div>
 <div id="mapwrap">
 	<div id='map'></div>
-	<div id="box"></div>
+	<!-- <div id="box"></div> -->
 </div>
 
 <script>
@@ -578,7 +580,7 @@ map.on("load", function(){
 	var toggle = document.querySelector('[name="show_labels"]');
 	toggle.addEventListener('change',toggleVisibility);
 	toggleVisibility();
-	load_center();
+	// load_center();
 });
 
 $("input[type=color").spectrum({
@@ -599,8 +601,9 @@ $("input[type=color").spectrum({
 map.on('zoomend', set_location_hash);
 map.on('moveend', set_location_hash);
 
-map.on('zoomend', load_center);
-map.on('moveend', load_center);
+// map.on('zoomend', load_center);
+// map.on('moveend', load_center);
+map.on('click',load_clicked);
 
 function toggleVisibility(){
 	var toggle = document.querySelector('[name="show_labels"]');
@@ -613,6 +616,14 @@ function load_center(){
 	var h = map.getContainer().clientHeight;
 	var buffer = document.getElementById('box').clientWidth / 2; // buffer box
 	var center = [[w/2 - buffer, h/2 - buffer], [w/2 + buffer, h/2 + buffer]];
+	load_features_at_point(center);
+}
+function load_clicked(e){
+	var buffer = 10;
+	var center = [[e.point.x - buffer, e.point.y - buffer], [e.point.x + buffer, e.point.y + buffer]];
+	load_features_at_point(center);
+}
+function load_features_at_point(center){
 	var features = map.queryRenderedFeatures(center, {layers: active_languages});
 
 	var list = document.getElementById('articles');
