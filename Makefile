@@ -29,7 +29,7 @@ build/percolation_connected_components:
 
 # extract segments from Europe .osm.pbf
 data/europe_segments.txt: pbf_segments
-	./build/pbf_segments data/europe-20220625.osm.pbf data/europe_segments.txt \  #20220625 represents data of access; originally 20160621
+	./build/pbf_segments data/andorra-20220629.pbf data/europe_segments.txt \  
 	data/europe_nodes.txt
 
 ##
